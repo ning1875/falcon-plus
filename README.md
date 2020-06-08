@@ -1,3 +1,7 @@
+# 架构图
+![image](https://github.com/ning1875/falcon-plus/blob/master/images/new.png)
+
+
 ###我重写了聚合器,重写聚合器目的 poly_metric VS aggregator
 - 解决endpoint多的聚合断点问题
 - 解决聚合器单点问题，使得横向扩展得以实现
