@@ -1,15 +1,12 @@
-# 架构图
-![image](https://github.com/ning1875/falcon-plus/blob/master/images/new.png)
-
-
-###我重写了聚合器,重写聚合器目的 poly_metric VS aggregator
+### 我重写了聚合器,重写聚合器目的 poly_metric VS aggregator
 - 解决endpoint多的聚合断点问题
 - 解决聚合器单点问题，使得横向扩展得以实现
 - 解耦聚合器各个单元，可以方便的增加新的聚合入口和聚合策略	
 
 
 
-###.falcon agent自升级
+### falcon agent自升级
+```
 	过程说明：
 	http-req --->hbs --->开启升级开关--->检查agent心跳信息中版本号，并检查当前hbs升级队列--->发送升级指令给agent ---> agent通过 升级命令中的url地址和目标版本号下载新的二进制（会有备份和回滚逻辑）--->agent check没有问题后获取自身的pid向自己发送kill信号 --->agent退出然后会被systemd拉起打到升级的目的--->新的心跳信息中版本checkok不会继续升级
 	升级举例说明:
@@ -38,7 +35,7 @@
 		body: {"wgeturl":"http://127.0.0.1/file/open-falcon","version":"6.0.2","binfile_md5":"f5c597f15e379a77d1e2ceeec7bd99a8"}
 		status_code: 200
 		body_format: json
-
+```
 ### 报警优化：
     1.alarm添加电话报警,IM报警	
 	2.报警发送优化pop速度,避免报警堆积在redis中
