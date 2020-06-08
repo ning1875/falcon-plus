@@ -1,0 +1,203 @@
+// Copyright 2017 Xiaomi, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package host
+
+import (
+	"fmt"
+	"io/ioutil"
+	"net"
+	"net/http"
+	"strconv"
+	"strings"
+
+	"github.com/bitly/go-simplejson"
+	"github.com/gin-gonic/gin"
+	h "github.com/open-falcon/falcon-plus/modules/api/app/helper"
+	f "github.com/open-falcon/falcon-plus/modules/api/app/model/falcon_portal"
+	u "github.com/open-falcon/falcon-plus/modules/api/app/utils"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
+)
+
+func GetHostBindToWhichHostGroup(c *gin.Context) {
+	HostIdTmp := c.Params.ByName("host_id")
+	if HostIdTmp == "" {
+		h.JSONR(c, badstatus, "host id is missing")
+		return
+	}
+	hostID, err := strconv.Atoi(HostIdTmp)
+	if err != nil {
+		log.Debugf("HostId: %v", HostIdTmp)
+		h.JSONR(c, badstatus, err)
+		return
+	}
+	grpHostMap := []f.GrpHost{}
+	db.Falcon.Select("grp_id").Where("host_id = ?", hostID).Find(&grpHostMap)
+	grpIds := []int64{}
+	for _, g := range grpHostMap {
+		grpIds = append(grpIds, g.GrpID)
+	}
+	hostgroups := []f.HostGroup{}
+	if len(grpIds) != 0 {
+		grpIdsStr, _ := u.ArrInt64ToString(grpIds)
+		db.Falcon.Where(fmt.Sprintf("id in (%s)", grpIdsStr)).Find(&hostgroups)
+	}
+	h.JSONR(c, hostgroups)
+	return
+}
+
+func GetHostGroupWithTemplate(c *gin.Context) {
+	grpIDtmp := c.Params.ByName("host_group")
+	if grpIDtmp == "" {
+		h.JSONR(c, badstatus, "grp id is missing")
+		return
+	}
+	grpID, err := strconv.Atoi(grpIDtmp)
+	if err != nil {
+		log.Debugf("grpIDtmp: %v", grpIDtmp)
+		h.JSONR(c, badstatus, err)
+		return
+	}
+	hostgroup := f.HostGroup{ID: int64(grpID)}
+	if dt := db.Falcon.Find(&hostgroup); dt.Error != nil {
+		h.JSONR(c, expecstatus, dt.Error)
+		return
+	}
+	hosts := []f.Host{}
+	grpHosts := []f.GrpHost{}
+	if dt := db.Falcon.Where("grp_id = ?", grpID).Find(&grpHosts); dt.Error != nil {
+		h.JSONR(c, expecstatus, dt.Error)
+		return
+	}
+	for _, grph := range grpHosts {
+		var host f.Host
+		db.Falcon.Find(&host, grph.HostID)
+		if host.ID != 0 {
+			hosts = append(hosts, host)
+		}
+	}
+	h.JSONR(c, map[string]interface{}{
+		"hostgroup": hostgroup,
+		"hosts":     hosts,
+	})
+	return
+}
+
+func GetGrpsRelatedHost(c *gin.Context) {
+	hostIDtmp := c.Params.ByName("host_id")
+	if hostIDtmp == "" {
+		h.JSONR(c, badstatus, "host id is missing")
+		return
+	}
+	hostID, err := strconv.Atoi(hostIDtmp)
+	if err != nil {
+		log.Debugf("host id: %v", hostIDtmp)
+		h.JSONR(c, badstatus, err)
+		return
+	}
+
+	host := f.Host{ID: int64(hostID)}
+	if dt := db.Falcon.Find(&host); dt.Error != nil {
+		h.JSONR(c, expecstatus, dt.Error)
+		return
+	}
+	grps := host.RelatedGrp()
+	h.JSONR(c, grps)
+	return
+}
+
+func GetTplsRelatedHost(c *gin.Context) {
+	hostIDtmp := c.Params.ByName("host_id")
+	if hostIDtmp == "" {
+		h.JSONR(c, badstatus, "host id is missing")
+		return
+	}
+	hostID, err := strconv.Atoi(hostIDtmp)
+	if err != nil {
+		log.Debugf("host id: %v", hostIDtmp)
+		h.JSONR(c, badstatus, err)
+		return
+	}
+	host := f.Host{ID: int64(hostID)}
+	if dt := db.Falcon.Find(&host); dt.Error != nil {
+		h.JSONR(c, expecstatus, dt.Error)
+		return
+	}
+	tpls := host.RelatedTpl()
+	h.JSONR(c, tpls)
+	return
+}
+
+// dashboard:点击host跳转grafana
+func GrafanaUrlHandler(c *gin.Context) {
+	endpoint := c.Params.ByName("endpoint")
+	ip, err := net.LookupIP(endpoint)
+	if err != nil || len(ip) == 0 {
+		redirect2GrafanaCN(c, endpoint)
+		return
+	}
+
+	client := &http.Client{}
+	sysPropertyUrl := viper.GetString("sys_property_url") + ip[0].String()
+	apikey := viper.GetString("sys_api_key")
+	request, err := http.NewRequest("GET", sysPropertyUrl, nil)
+	if err != nil {
+		redirect2GrafanaCN(c, endpoint)
+		return
+	}
+	request.Header.Add("apikey", apikey)
+	response, err := client.Do(request)
+	if err != nil {
+		redirect2GrafanaCN(c, endpoint)
+		return
+	}
+	defer response.Body.Close()
+
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		redirect2GrafanaCN(c, endpoint)
+		return
+	}
+	js, err := simplejson.NewJson(body)
+	if err != nil {
+		redirect2GrafanaCN(c, endpoint)
+		return
+	}
+	result := js.Get("results")
+	resultEndpoint := result.Get(ip[0].String())
+	resultCountry, err := resultEndpoint.Get("country").String()
+	if err != nil {
+		redirect2GrafanaCN(c, endpoint)
+		return
+	}
+
+	if strings.EqualFold(resultCountry, "cn") {
+		redirect2GrafanaCN(c, endpoint)
+		return
+	} else {
+		redirect2GrafanaUS(c, endpoint)
+		return
+	}
+}
+
+func redirect2GrafanaCN(c *gin.Context, endpoint string) {
+	url := viper.GetString("grafana_cn")
+	c.Redirect(301, url+endpoint)
+}
+
+func redirect2GrafanaUS(c *gin.Context, endpoint string) {
+	url := viper.GetString("grafana_us")
+	c.Redirect(301, url+endpoint)
+}

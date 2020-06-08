@@ -1,0 +1,16 @@
+{
+    "debug": false,
+    "database": "root:@tcp(127.0.0.1:3306)/falcon_portal?loc=Local&parseTime=true",
+    "hosts": "",
+    "maxConns": 20,
+    "maxIdle": 100,
+    "listen": ":6030",
+    "trustable": [""],
+    "http": {
+        "enabled": true,
+        "listen": "0.0.0.0:6031"
+    },
+    "redis_cluster_nodes":["10.26.54.80:7000", "10.26.54.85:7000", "10.26.57.221:7000", "10.26.58.141:7000", "10.26.58.142:7000"],
+    "agent_update_queue_length":2000,
+    "redis_agent_upgrade_set_expire":65
+}

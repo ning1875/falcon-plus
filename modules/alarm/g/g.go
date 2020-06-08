@@ -1,0 +1,34 @@
+// Copyright 2017 Xiaomi, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package g
+
+import (
+	"log"
+	"runtime"
+	"time"
+)
+
+const (
+	VERSION                  = "0.2.0"
+	CacheTTl                 = time.Minute * 30
+	BYTEMAIL                 = "@xxx.com"
+	BLOCK_MONITOR_SET        = "block_monitor_set"
+	BLOCK_MONITOR_KEY_PREFIX = "single_block_monitor_"
+)
+
+func init() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
+	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
+}

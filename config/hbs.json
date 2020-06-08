@@ -1,0 +1,13 @@
+{
+    "debug": true,
+    "database": "%%MYSQL%%/falcon_portal?loc=Local&parseTime=true",
+    "hosts": "",
+    "maxConns": 20,
+    "maxIdle": 15,
+    "listen": ":6030",
+    "trustable": [""],
+    "http": {
+        "enabled": true,
+        "listen": "%%HBS_HTTP%%"
+    }
+}

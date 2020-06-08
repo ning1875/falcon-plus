@@ -1,0 +1,57 @@
+{
+    "log_level": "info",
+    "http": {
+        "enabled": true,
+        "listen": "0.0.0.0:9912"
+    },
+    "redis": {
+        "redis_cluster_nodes":["xxxxx"],
+        "highQueues": [
+            "testevent:p0",
+            "testevent:p9"
+        ],
+        "lowQueues": [
+            "testevent:p1",
+            "testevent:p2",
+            "testevent:p3",
+            "testevent:p4",
+            "testevent:p5",
+            "testevent:p6"
+        ],
+        "userIMQueue": "/test/queue/user/im",
+        "userSmsQueue": "/test/queue/user/sms",
+        "userMailQueue": "/test/queue/user/mail"
+    },
+    "api": {
+        "sms": "xxxxxxxxx",
+        "mail": "xxxxxxxxx",
+        "im": "xxxxxxxxx",
+        "im_group_url": "xxxxxxxx",
+        "im_group_token": "xxxxxxxxx",
+        "phone": "http://api-ops.xxx.com/send/yy",
+        "dashboard": "http://falcon.xxx.com",
+        "plus_api":"http://falcon-api.d.xxx.com:8080",
+        "main_api":"http://falcon-api.d.xxx.com:8080",
+        "plus_api_token": "default-token-used-in-server-side"
+    },
+    "falcon_portal": {
+        "addr": "user:pass@tcp(host:3306)/alarms?charset=utf8&loc=Asia%2FChongqing",
+        "idle": 10,
+        "max": 100
+    },
+    "worker": {
+        "im": 200,
+        "sms": 200,
+        "mail": 200,
+        "phone": 200
+    },
+    "housekeeper": {
+        "event_retention_days": 7,
+        "event_delete_batch": 100
+    },
+    "lark_bot_tokens":[
+        "xxxxxxxxx",
+        "xxxxxxxxx"
+    ],
+    "alarm_api":"http://localhost:9912"
+}

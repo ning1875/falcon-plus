@@ -1,0 +1,43 @@
+{
+    "log_level": "info",
+    "gaussian_num":1.5,
+    "prome": {
+        "enabled": true,
+        "address":"10.3.21.225:9091",
+        "push_interval":15
+    },
+
+    "http": {
+        "enabled": true,
+        "listen": "0.0.0.0:9913"
+    },
+    "rpc": {
+        "enabled": true,
+        "listen": "0.0.0.0:8533"
+    },
+    "nump_rpc": {
+      "enabled": false,
+      "url":"http://10.2.219.148:10000/jsonrpc"
+    },
+    "redis": {
+        "redis_cluster_nodes":["10.3.21.225:7000", "10.3.21.225:7001", "10.3.21.225:7002", "10.3.21.225:7003", "10.3.21.225:7004","10.3.21.225:7005"]
+    },
+    "kafka":{
+        "kafka_nodes":["10.3.132.51:9092","10.11.178.160:9092"],
+        "topic_name":"sys_openfalcon_polywork"
+    },
+    "api": {
+        "group": "http://api-ops.xxx.com/send/sms",
+        "push_api":  "http://transfer.d.xxx.com:6060/api/push"
+    },
+    "falcon_portal": {
+        "addr": "root:xxx@tcp(xxxx:3306)/falcon_portal?charset=utf8&loc=Asia%2FChongqing",
+        "idle": 10,
+        "max": 100
+    },
+    "falcon_outlier": {
+        "addr": "root:xxxx@tcp(xxxxx:3306)/falcon_outlier?charset=utf8",
+        "idle": 10,
+        "max": 100
+    }
+}

@@ -1,0 +1,88 @@
+{
+    "debug": true,
+    "minStep": 30,
+    "http": {
+        "enabled": true,
+        "listen": "0.0.0.0:6060"
+    },
+    "rpc": {
+        "enabled": true,
+        "listen": "0.0.0.0:8433"
+    },
+    "socket": {
+        "enabled": true,
+        "listen": "0.0.0.0:4444",
+        "timeout": 3600
+    },
+    "kafka": {
+        "enabled": true,
+	"cpubool": true,
+	"storageiobool": true,
+	"netiobool": true,
+	"databuschannel": "sys_test"
+    },
+    "redis": {
+        "redis_cluster_nodes":["10.3.21.225:7000", "10.3.21.225:7001", "10.3.21.225:7002", "10.3.21.225:7003", "10.3.21.225:7004","10.3.21.225:7005"]
+    },
+    "judge": {
+        "enabled": true,
+        "batch": 200,
+        "connTimeout": 1000,
+        "callTimeout": 5000,
+        "maxConns": 32,
+        "maxIdle": 32,
+        "replicas": 500,
+        "cluster": {
+            "judge-00" : "127.0.0.1:6080"
+        }
+    },
+
+    "poly": {
+        "enabled": true,
+        "batch": 200,
+        "connTimeout": 1000,
+        "callTimeout": 5000,
+        "maxConns": 32,
+        "maxIdle": 32,
+        "replicas": 500,
+        "cluster": {
+            "poly-00" : "127.0.0.1:6080"
+        }
+    },
+    "graph": {
+        "enabled": true,
+        "batch": 200,
+        "connTimeout": 1000,
+        "callTimeout": 5000,
+        "maxConns": 32,
+        "maxIdle": 32,
+        "replicas": 500,
+        "cluster": {
+            "graph-00" : "127.0.0.1:6070"
+        }
+    },
+    "tsdb": {
+        "enabled": false,
+        "batch": 200,
+        "connTimeout": 1000,
+        "callTimeout": 5000,
+        "maxConns": 32,
+        "maxIdle": 32,
+        "retry": 3,
+        "address": "127.0.0.1:8088"
+    },
+    "influxdb": {
+        "enabled": true,
+        "batch": 200,
+        "connTimeout": 1000,
+        "callTimeout": 5000,
+        "maxConns": 32,
+        "maxIdle": 32,
+        "retry": 3,
+        "interval":3,
+        "username":"",
+        "dbname":"dynamic_metric",
+        "password":"",
+        "address": "http://10.14.68.204:8086"
+    }
+}

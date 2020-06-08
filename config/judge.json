@@ -1,0 +1,30 @@
+{
+    "debug": true,
+    "debugHost": "nil",
+    "remain": 11,
+    "http": {
+        "enabled": true,
+        "listen": "%%JUDGE_HTTP%%"
+    },
+    "rpc": {
+        "enabled": true,
+        "listen": "%%JUDGE_RPC%%"
+    },
+    "hbs": {
+        "servers": ["%%HBS_RPC%%"],
+        "timeout": 300,
+        "interval": 60
+    },
+    "alarm": {
+        "enabled": true,
+        "minInterval": 300,
+        "queuePattern": "event:p%v",
+        "redis": {
+            "dsn": "%%REDIS%%",
+            "maxIdle": 5,
+            "connTimeout": 5000,
+            "readTimeout": 5000,
+            "writeTimeout": 5000
+        }
+    }
+}

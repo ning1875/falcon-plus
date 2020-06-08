@@ -1,0 +1,33 @@
+{
+    "debug": true,
+    "log_level": "info",
+    "debugHost": "nil",
+    "remain": 11,
+    "is_union":false,
+    "http": {
+        "enabled": true,
+        "listen": "0.0.0.0:6081"
+    },
+    "rpc": {
+        "enabled": true,
+        "listen": "0.0.0.0:6080"
+    },
+    "hbs": {
+        "servers": ["127.0.0.1:6030"],
+        "timeout": 300,
+        "interval": 60
+    },
+    "alarm": {
+        "enabled": true,
+        "minInterval": 300,
+        "queuePattern": "event:p%v",
+        "redis": {
+            "redis_cluster_nodes":["10.14.68.200:7000", "10.14.68.201:7000", "10.14.68.202:7000", "10.14.68.203:7000", "10.14.68.204:7000"],
+            "dsn": "127.0.0.1:6379",
+            "maxIdle": 5,
+            "connTimeout": 5000,
+            "readTimeout": 5000,
+            "writeTimeout": 5000
+        }
+    }
+}

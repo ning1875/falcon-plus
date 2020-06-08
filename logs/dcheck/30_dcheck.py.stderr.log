@@ -1,0 +1,4 @@
+  File "/opt/open-falcon/agent/plugin/dcheck/30_dcheck.py", line 31
+    print e
+          ^
+SyntaxError: Missing parentheses in call to 'print'. Did you mean print(e)?
